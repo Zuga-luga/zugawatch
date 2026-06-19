@@ -18,9 +18,9 @@ inputs:
     required: false
     default: ""
   ref:
-    description: "mcp-sentinel version/ref to install (pip spec)."
+    description: "pip spec to install. Defaults to the git tag (works before PyPI publish); set to 'mcp-sentinel==0.2.1' once published."
     required: false
-    default: "mcp-sentinel"
+    default: "git+https://github.com/Zuga-luga/mcp-sentinel@v0.2"
 
 outputs:
   grade:
