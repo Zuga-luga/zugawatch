@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+- **Empirical benchmark**: `benchmark/dataset.py` (122 labeled scenarios —
+  attacks, benign, evasion) + `benchmark/run.py` harness reporting
+  precision/recall/F1/FPR/latency, written to `benchmark/RESULTS.md`.
+- Data-driven rule improvements surfaced by the benchmark:
+  - SENT001 now detects **base64-encoded** exfiltration (recall 0.855→0.902).
+  - SENT002 suppresses legitimate **in-place file edits** (read→overwrite same
+    resource, same server), eliminating false positives (precision 0.887→1.000,
+    FPR 0.098→0.000).
+- Honest recall ceiling: a XOR-obfuscation evasion class is reported as missed,
+  not hidden. Regression-guard test locks the metrics in CI.
+
 ## 0.2.1
 - **`sentinel-action`** composite GitHub Action: one-line CI gate that installs
   Sentinel, runs the rug-pull/drift check and chain grade, fails the build on

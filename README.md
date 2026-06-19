@@ -81,7 +81,7 @@ the runtime rug-pull catch, *before* the agent uses the tools.
 
 ```yaml
 # .github/workflows/sentinel.yml
-- uses: Zuga-luga/mcp-sentinel@v0.2
+- uses: Zuga-luga/mcp-sentinel@v0.3
   with:
     tools: examples/tools.json        # rug-pull check (pins on first run)
     chain: examples/chain_exfil.json  # grade the recorded session
@@ -107,6 +107,28 @@ sentinel-mcp     # exposes analyze_chain, check_drift, grade_server
 Rules are plain functions `(CallChain) -> list[Finding]`; add your own by passing
 them to `AnomalyEngine(rules=[...])`.
 
+## Benchmark — measured, not claimed
+
+Security tools live or die on data. Sentinel ships a labeled corpus
+(`benchmark/dataset.py`, 122 scenarios: attacks, benign, and evasion) and an
+evaluation harness (`benchmark/run.py`) that reports precision / recall / F1 /
+false-positive-rate. Run it yourself: `python benchmark/run.py`.
+
+| Metric | Value |
+|---|---|
+| Precision | **1.000** |
+| Recall | **0.902** |
+| F1 | **0.948** |
+| False-positive rate | **0.000** |
+| Latency p95 | **< 0.02 ms / scenario** |
+
+Recall is deliberately **not** 1.0: the corpus includes a XOR-obfuscated
+exfiltration class that the current heuristics cannot see, and the harness
+reports it as a miss rather than hiding it. That recall ceiling is the roadmap.
+The rule improvements that took precision 0.887→1.000 and recall 0.855→0.902
+(base64-aware data-flow; suppressing legitimate in-place file edits) were both
+driven by failures this benchmark surfaced. Full report: `benchmark/RESULTS.md`.
+
 ## Design
 
 ```
@@ -123,12 +145,13 @@ back to name/description heuristics when a server omits them — which most do.
 
 ## Status
 
-v0.2 — pinning, the three anomaly rules, grading, CLI, the MCP-server interface,
-and the **transparent stdio proxy** are implemented and tested (18 tests). The
-proxy records a live session automatically and flags drift in real time.
+v0.3 — pinning, three anomaly rules, grading, CLI, MCP-server interface,
+transparent stdio proxy, GitHub Action, and an empirical benchmark are all
+implemented and tested (20 tests, CI-gated metrics).
 
-Roadmap: a `sentinel-action` GitHub Action wrapper (one-line CI install), more
-anomaly rules (cross-server data pivots, privilege escalation), and SARIF output.
+Roadmap: defeat the XOR/encryption exfil evasion class (entropy + length
+heuristics), cross-server data-pivot and privilege-escalation rules, SARIF
+output, and PyPI publish.
 
 ## License
 

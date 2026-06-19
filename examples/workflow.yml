@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Zuga-luga/mcp-sentinel@v0.2
+      - uses: Zuga-luga/mcp-sentinel@v0.3
         with:
           tools: examples/tools.json        # rug-pull check (pin on first run)
           chain: examples/chain_exfil.json  # grade the recorded session

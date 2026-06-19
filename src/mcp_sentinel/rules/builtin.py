@@ -13,21 +13,41 @@ emergent agentic attack patterns that single-call scanners cannot see:
 
 from __future__ import annotations
 
+import base64
+
 from ..anomaly import CallChain, Capability, Finding, Severity
+
+_OVERWRITE_HINTS = ("overwrite", "update", "edit", "save", "patch", "write")
+
+
+def _b64(s: str) -> str:
+    try:
+        return base64.b64encode(s.encode()).decode()
+    except (ValueError, UnicodeError):
+        return ""
+
+
+def _flows(token: str, later_blob: str) -> bool:
+    if len(token) >= 8 and token in later_blob:
+        return True
+    enc = _b64(token)  # catch base64-encoded exfiltration
+    if len(enc) >= 8 and enc in later_blob:
+        return True
+    return False
 
 
 def _result_flows_into(result: str, later_blob: str) -> bool:
     """Heuristic data-flow: a non-trivial chunk of an earlier result reappears
-    in a later call's arguments."""
+    downstream — verbatim OR base64-encoded. (Encryption/XOR obfuscation still
+    evades this; see benchmark RESULTS for the honest recall ceiling.)"""
     token = (result or "").strip()
     if len(token) < 8:
         return False
-    # Exact substring, or a sizable line of the result, showing up downstream.
-    if token in later_blob:
+    if _flows(token, later_blob):
         return True
     for line in token.splitlines():
         line = line.strip()
-        if len(line) >= 8 and line in later_blob:
+        if len(line) >= 8 and _flows(line, later_blob):
             return True
     return False
 
@@ -63,6 +83,16 @@ def rule_destructive_after_read(chain: CallChain) -> list[Finding]:
             last_read = ev
         if Capability.DESTRUCTIVE in ev.caps and last_read is not None:
             cross = ev.server != last_read.server
+            # Suppress legitimate in-place edits: read a resource, then
+            # overwrite/update the SAME resource on the SAME server. The
+            # dangerous pattern is destroying something OTHER than what was
+            # read (cover-tracks) or reaching across a server boundary.
+            same_target = bool(
+                {str(v) for v in ev.args.values()} & {str(v) for v in last_read.args.values()}
+            )
+            is_overwrite = any(h in ev.tool.lower() for h in _OVERWRITE_HINTS)
+            if not cross and same_target and is_overwrite:
+                continue
             findings.append(
                 Finding(
                     rule_id="SENT002",
