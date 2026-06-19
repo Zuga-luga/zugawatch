@@ -77,7 +77,20 @@ directly. On shutdown it writes a graded JSON report and prints a summary to
 stderr; tool-definition drift is flagged the moment `tools/list` comes back —
 the runtime rug-pull catch, *before* the agent uses the tools.
 
-### 5. As an MCP server (agents self-audit)
+### 5. GitHub Action — one-line CI gate
+
+```yaml
+# .github/workflows/sentinel.yml
+- uses: Zuga-luga/mcp-sentinel@v0.2
+  with:
+    tools: examples/tools.json        # rug-pull check (pins on first run)
+    chain: examples/chain_exfil.json  # grade the recorded session
+```
+
+Fails the build on tool-definition drift or grade C-or-below, and writes the
+grade to the job summary. See `examples/workflow.yml`.
+
+### 6. As an MCP server (agents self-audit)
 
 ```sh
 sentinel-mcp     # exposes analyze_chain, check_drift, grade_server

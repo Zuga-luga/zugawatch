@@ -1,0 +1,63 @@
+name: "MCP Sentinel"
+description: "Gate CI on MCP tool-definition drift (rug-pulls) and call-chain anomalies. Fails the build on grade C or below."
+branding:
+  icon: "shield"
+  color: "blue"
+
+inputs:
+  tools:
+    description: "Path to a tools.json (pinned/verified for rug-pull drift). Optional."
+    required: false
+    default: ""
+  lock:
+    description: "Lockfile path. Created on first run, verified against on later runs."
+    required: false
+    default: "sentinel.lock"
+  chain:
+    description: "Path to a recorded call-chain JSON to grade. Optional."
+    required: false
+    default: ""
+  ref:
+    description: "mcp-sentinel version/ref to install (pip spec)."
+    required: false
+    default: "mcp-sentinel"
+
+outputs:
+  grade:
+    description: "The A-F grade for the chain (empty if no chain provided)."
+    value: ${{ steps.run.outputs.grade }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install mcp-sentinel
+      shell: bash
+      run: pip install "${{ inputs.ref }}"
+    - id: run
+      shell: bash
+      run: |
+        set -e
+        status=0
+        if [ -n "${{ inputs.tools }}" ]; then
+          if [ -f "${{ inputs.lock }}" ]; then
+            echo "::group::Rug-pull / drift check"
+            sentinel verify "${{ inputs.tools }}" --lock "${{ inputs.lock }}" || status=1
+            echo "::endgroup::"
+          else
+            echo "No lockfile at ${{ inputs.lock }} — pinning for the first time."
+            sentinel pin "${{ inputs.tools }}" --lock "${{ inputs.lock }}"
+          fi
+        fi
+        if [ -n "${{ inputs.chain }}" ]; then
+          echo "::group::Call-chain grade"
+          out=$(sentinel grade "${{ inputs.chain }}") || status=1
+          echo "$out"
+          grade=$(echo "$out" | head -1 | sed -E 's/^GRADE ([A-F]).*/\1/')
+          echo "grade=$grade" >> "$GITHUB_OUTPUT"
+          echo "### MCP Sentinel: grade $grade" >> "$GITHUB_STEP_SUMMARY"
+          echo "::endgroup::"
+        fi
+        exit $status

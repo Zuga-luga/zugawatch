@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+- **`sentinel-action`** composite GitHub Action: one-line CI gate that installs
+  Sentinel, runs the rug-pull/drift check and chain grade, fails the build on
+  drift or grade C-or-below, and writes the grade to the job summary.
+
 ## 0.2.0
 - **Transparent stdio proxy** (`sentinel proxy -- <server cmd>`): spawns a target
   MCP server, relays stdio faithfully, and records the live session into a graded
