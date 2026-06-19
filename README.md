@@ -159,9 +159,10 @@ back to name/description heuristics when a server omits them — which most do.
 
 ## Status
 
-v0.3 — pinning, three anomaly rules, grading, CLI, MCP-server interface,
-transparent stdio proxy, GitHub Action, and an empirical benchmark are all
-implemented and tested (20 tests, CI-gated metrics).
+v0.4 — pinning, three call-chain anomaly rules, the static manifest scanner,
+grading, CLI, MCP-server interface, transparent stdio proxy, GitHub Action, an
+empirical benchmark, and a field-test harness are all implemented and tested
+(26 tests, CI-gated metrics).
 
 Roadmap: defeat the XOR/encryption exfil evasion class (entropy + length
 heuristics), cross-server data-pivot and privilege-escalation rules, SARIF
