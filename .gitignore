@@ -13,3 +13,5 @@ htmlcov/
 sentinel.lock
 fieldtest/servers.*.json
 fieldtest/FINDINGS.md
+
+dist/

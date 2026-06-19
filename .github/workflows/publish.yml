@@ -1,0 +1,26 @@
+name: Publish to PyPI
+
+# Publishes on every v* tag using PyPI Trusted Publishing (OIDC) — no API token
+# stored in the repo. One-time setup on PyPI: add a "pending publisher" for
+# project `mcp-sentinel`, owner `Zuga-luga`, repo `mcp-sentinel`, workflow
+# `publish.yml`, environment `pypi`. (https://docs.pypi.org/trusted-publishers/)
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write          # required for trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build
+      - run: pip install -e ".[dev]" && pytest -q   # never ship a red build
+      - uses: pypa/gh-action-pypi-publish@release/v1
