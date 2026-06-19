@@ -43,13 +43,21 @@ _SECRETS = re.compile(
     re.IGNORECASE,
 )
 
-_CROSS_TOOL = re.compile(
-    r"\b(also\s+(call|invoke|use|run)|before\s+(using|calling|responding)|after\s+(you\s+)?(call|use)"
-    r"|then\s+(call|invoke)|use\s+the\s+\w+\s+tool\s+to)\b",
+# NOTE: a generic "cross-tool steering" rule (MCPP004) was REMOVED in v0.7 after
+# the field test showed it was ~100% false positives — legitimate tools routinely
+# describe ordering ("call before retrying", "for subsequent calls"). Adversarial
+# steering that hides from the user is already caught by MCPP002. A standalone
+# rule that only fires on benign text is worse than no rule.
+
+# A bare URL in a description is normal (docs/data links). Only flag a URL paired
+# with an exfiltration imperative — "send/post/upload ... to https://...".
+# "post" is excluded — it's overloaded as an HTTP-method word ("Redeem at POST
+# https://...") and produced a false positive. Keep only verbs that unambiguously
+# mean "send data out".
+_EXFIL_URL = re.compile(
+    r"\b(send|upload|exfiltrate|ex-?filtrate|leak|deliver|transmit)\b[^.\n]{0,60}?https?://[^\s\"'<>]+",
     re.IGNORECASE,
 )
-
-_URL = re.compile(r"https?://[^\s\"'<>]+", re.IGNORECASE)
 
 
 def _text(tool: ToolDef) -> str:
@@ -69,12 +77,9 @@ def scan_tool(tool: ToolDef) -> list[Finding]:
     if _SECRETS.search(text):
         findings.append(Finding("MCPP003", Severity.HIGH,
             f"Tool '{tool.name}' description references secrets/credentials (e.g. SSH keys, .env, tokens)."))
-    if _CROSS_TOOL.search(text):
-        findings.append(Finding("MCPP004", Severity.MEDIUM,
-            f"Tool '{tool.name}' description instructs the agent to call OTHER tools (cross-tool steering)."))
-    for url in _URL.findall(tool.description or ""):
-        findings.append(Finding("MCPP005", Severity.LOW,
-            f"Tool '{tool.name}' description embeds a URL ({url}) — possible exfil/instruction sink."))
+    if _EXFIL_URL.search(tool.description or ""):
+        findings.append(Finding("MCPP005", Severity.HIGH,
+            f"Tool '{tool.name}' description instructs sending data to an external URL — exfiltration sink."))
     return findings
 
 

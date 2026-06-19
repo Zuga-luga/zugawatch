@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.0
+- **Eliminated the remaining static-scan false positives.** On the 183-server
+  field sample the v0.6 rules still over-flagged via cross-tool steering (MCPP004)
+  and bare-URL (MCPP005) matches — all benign (workflow ordering, doc links).
+  - **Removed MCPP004** entirely: legitimate tools constantly reference other
+    tools; a standalone "cross-tool steering" rule is ~100% false-positive and
+    adversarial steering is already covered by MCPP002.
+  - **MCPP005 narrowed** to fire only on an exfil verb adjacent to a URL
+    ("send/upload/exfiltrate … https://…"), now HIGH severity. Excludes "post"
+    (overloaded HTTP-method word).
+  - Result: **0 findings, 0 false positives across all 183 servers** — no
+    tool-poisoning in the sample. Regression tests cover doc-URL (clean) vs
+    exfil-URL (flagged).
+
 ## 0.6.0
 - **Real-world field test drove a major precision fix.** Scanned 183 live
   Smithery servers (172 with tools). Naive keyword rules produced 600+ false

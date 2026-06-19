@@ -35,10 +35,13 @@ Top 10 lists it under ASI01 (Agent Goal Hijack).
   | Rule | What it catches | Severity |
   |---|---|---|
   | MCPP001 | hidden / zero-width / bidi unicode | HIGH |
-  | MCPP002 | prompt-injection / override language | HIGH |
-  | MCPP003 | references to secrets/credentials (SSH keys, `.env`, tokens) | HIGH |
-  | MCPP004 | cross-tool steering ("also call X") | MEDIUM |
-  | MCPP005 | embedded URLs (exfil / instruction sink) | LOW |
+  | MCPP002 | override / conceal-from-user imperatives ("ignore previous instructions", "do not tell the user") | HIGH |
+  | MCPP003 | imperative to read a credential file (`~/.ssh/id_rsa`, `.aws/credentials`, `/etc/passwd`) | HIGH |
+  | MCPP005 | instruction to send data to an external URL (exfil sink) | HIGH |
+
+  Two rules from earlier drafts were cut after the field test proved them
+  unreliable: a broad "mentions secrets" keyword rule and a "cross-tool steering"
+  rule, both ~100% false-positive on real, legitimate servers.
 
 - **Safety:** manifests only. No server was installed or run. Reproduce with the
   commands at the top of this file.

@@ -7,7 +7,7 @@ anomalous execution patterns (e.g. read -> exfiltrate -> delete) that no
 single static scanner can see.
 """
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 from .pinning import ToolDef, ToolPin, PinStore, diff_pins
 from .anomaly import CallEvent, CallChain, Finding, AnomalyEngine

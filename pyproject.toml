@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-sentinel"
-version = "0.6.0"
+version = "0.7.0"
 description = "Runtime call-chain anomaly monitor for MCP servers — rug-pull detection + behavioural anomaly rules, delivered as a CLI, a GitHub Action, and an MCP server."
 readme = "README.md"
 requires-python = ">=3.11"

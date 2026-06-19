@@ -103,13 +103,15 @@ python fieldtest/fetch.py --source glama --limit 200 --out fieldtest/servers.gla
 Servers are never executed — the fetcher and scanner read published manifest JSON
 only, so this is safe to run across thousands of untrusted servers.
 
-> **Field test (183 live Smithery servers).** First run with naive keyword rules
-> produced 600+ "findings" — almost all false positives, because legitimate
+> **Field test (183 live Smithery servers).** A first pass with naive keyword
+> rules produced 600+ "findings" — almost all false positives, because legitimate
 > auth/crypto/password-manager tools say "token"/"password"/"api key" and
-> prompt-engineering tools say "system prompt"/"jailbreak". After narrowing the
-> rules from vocabulary to attack-patterns: **0 false positives, no tool-poisoning
-> found** in the sample. The lesson — "scan tool descriptions for scary words"
-> over-flags massively — is itself the result.
+> prompt-engineering tools say "system prompt"/"jailbreak". Tightening the rules
+> from *vocabulary* to *attack-patterns* — and **deleting two rules** that proved
+> ~100% false-positive on real servers (broad secret-keyword, cross-tool
+> steering) — took it to **0 findings, 0 false positives, no tool-poisoning found**
+> across all 183. The lesson — "scan tool descriptions for scary words" over-flags
+> massively — is itself the result, and the reason a precise detector matters.
 
 ### 6. GitHub Action — one-line CI gate
 
