@@ -63,7 +63,21 @@ sentinel grade examples/chain_exfil.json
 # GRADE D  (50/100)  findings=2 drifts=0   (exit 1)
 ```
 
-### 4. As an MCP server (agents self-audit)
+### 4. Transparent proxy — record a live session automatically
+
+Wrap any MCP server. Sentinel spawns it, relays stdio faithfully (the client and
+server don't know it's there), and records the real session — no manual JSON:
+
+```sh
+sentinel proxy --lock sentinel.lock --report report.json -- npx -y @some/mcp-server
+```
+
+Point your MCP client at `sentinel proxy -- <server cmd>` instead of the server
+directly. On shutdown it writes a graded JSON report and prints a summary to
+stderr; tool-definition drift is flagged the moment `tools/list` comes back —
+the runtime rug-pull catch, *before* the agent uses the tools.
+
+### 5. As an MCP server (agents self-audit)
 
 ```sh
 sentinel-mcp     # exposes analyze_chain, check_drift, grade_server
@@ -96,10 +110,12 @@ back to name/description heuristics when a server omits them — which most do.
 
 ## Status
 
-v0.1 — pinning, the three anomaly rules above, grading, CLI, and the MCP-server
-interface are implemented and tested. The transparent stdio **proxy** that
-records a live chain automatically is on the roadmap (today you feed it a
-recorded chain or wire `CallChain.record()` into your client).
+v0.2 — pinning, the three anomaly rules, grading, CLI, the MCP-server interface,
+and the **transparent stdio proxy** are implemented and tested (18 tests). The
+proxy records a live session automatically and flags drift in real time.
+
+Roadmap: a `sentinel-action` GitHub Action wrapper (one-line CI install), more
+anomaly rules (cross-server data pivots, privilege escalation), and SARIF output.
 
 ## License
 

@@ -84,6 +84,23 @@ def cmd_analyze(args) -> int:
     return 1
 
 
+def cmd_proxy(args) -> int:
+    from .proxy import StdioProxy
+
+    command = args.command
+    if command and command[0] == "--":
+        command = command[1:]
+    if not command:
+        print("usage: sentinel proxy [--lock L] [--report R] -- <server command...>", file=sys.stderr)
+        return 2
+    return StdioProxy(
+        command=command,
+        lock_path=args.lock,
+        report_path=args.report,
+        server_name=args.name,
+    ).run()
+
+
 def cmd_grade(args) -> int:
     findings = AnomalyEngine().analyze(_chain(args.chain))
     drifts = []
@@ -114,6 +131,16 @@ def build_parser() -> argparse.ArgumentParser:
     sa = sub.add_parser("analyze", help="run anomaly rules over a recorded call-chain")
     sa.add_argument("chain")
     sa.set_defaults(func=cmd_analyze)
+
+    pr = sub.add_parser(
+        "proxy",
+        help="run a target MCP server through Sentinel, recording the live session",
+    )
+    pr.add_argument("--lock", help="pin/verify tool defs against this lockfile (rug-pull check)")
+    pr.add_argument("--report", help="write the graded JSON report here at shutdown")
+    pr.add_argument("--name", default="proxied", help="label for the proxied server")
+    pr.add_argument("command", nargs=argparse.REMAINDER, help="-- <server command...>")
+    pr.set_defaults(func=cmd_proxy)
 
     sg = sub.add_parser("grade", help="produce an A-F grade from a chain (+ optional pins)")
     sg.add_argument("chain")

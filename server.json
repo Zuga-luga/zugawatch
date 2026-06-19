@@ -3,7 +3,7 @@
   "name": "io.github.zuga-luga/mcp-sentinel",
   "title": "MCP Sentinel",
   "description": "Runtime call-chain anomaly monitor for MCP servers: rug-pull (tool-definition drift) detection plus behavioural anomaly rules over the sequence of tool calls.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": {
     "url": "https://github.com/Zuga-luga/mcp-sentinel",
     "source": "github"
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "mcp-sentinel",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "transport": { "type": "stdio" },
       "runtimeHint": "uvx",
       "packageArguments": []
