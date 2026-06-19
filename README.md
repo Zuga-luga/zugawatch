@@ -103,15 +103,24 @@ python fieldtest/fetch.py --source glama --limit 200 --out fieldtest/servers.gla
 Servers are never executed — the fetcher and scanner read published manifest JSON
 only, so this is safe to run across thousands of untrusted servers.
 
-> **Field test (183 live Smithery servers).** A first pass with naive keyword
-> rules produced 600+ "findings" — almost all false positives, because legitimate
-> auth/crypto/password-manager tools say "token"/"password"/"api key" and
-> prompt-engineering tools say "system prompt"/"jailbreak". Tightening the rules
-> from *vocabulary* to *attack-patterns* — and **deleting two rules** that proved
-> ~100% false-positive on real servers (broad secret-keyword, cross-tool
-> steering) — took it to **0 findings, 0 false positives, no tool-poisoning found**
-> across all 183. The lesson — "scan tool descriptions for scary words" over-flags
-> massively — is itself the result, and the reason a precise detector matters.
+### Field test: 183 live servers, naive scanners flag 401, we flag 0
+
+I scanned **183 live public MCP servers** (Smithery, 3,171 tool definitions). A
+keyword-style scanner — the common approach — flagged 32 servers with 401
+findings. Every one was a false positive: password managers say "password,"
+crypto tools say "token," prompt-engineering tools literally discuss "prompt
+injection." After tightening the rules from *vocabulary* to *attack-patterns*
+(and deleting two rules that proved unreliable on real data), the **same** 183
+servers produced zero findings.
+
+| Detector (same 183 servers) | Servers flagged | Findings |
+|---|---|---|
+| Keyword rules (grep for scary words) | 32 | **401 — all false positives** |
+| Attack-pattern rules (mcp-sentinel) | **0** | **0** |
+
+The takeaway — *in agent security, false-positive discipline is the whole game; a
+detector that cries wolf 401 times trains everyone to ignore it* — is itself the
+result. Full method, caveats, and reproduction: **[fieldtest/WRITEUP.md](fieldtest/WRITEUP.md)**.
 
 ### 6. GitHub Action — one-line CI gate
 
