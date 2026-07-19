@@ -1,6 +1,6 @@
-from mcp_sentinel.anomaly import Finding, Severity
-from mcp_sentinel.grade import grade
-from mcp_sentinel.pinning import Drift, DriftKind
+from zugawatch.anomaly import Finding, Severity
+from zugawatch.grade import grade
+from zugawatch.pinning import Drift, DriftKind
 
 
 def test_clean_is_A():

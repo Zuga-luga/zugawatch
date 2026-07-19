@@ -1,13 +1,13 @@
 # Drop this in .github/workflows/ of any repo that ships or consumes an MCP server.
-name: MCP Sentinel
+name: MCP ZugaWatch
 on: [push, pull_request]
 
 jobs:
-  sentinel:
+  zugawatch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Zuga-luga/mcp-sentinel@v0.4
+      - uses: Zuga-luga/zugawatch@v0.4
         with:
           tools: examples/tools.json        # rug-pull check (pin on first run)
           chain: examples/chain_exfil.json  # grade the recorded session

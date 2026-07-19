@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mcp-sentinel"
+name = "zugawatch"
 version = "0.7.0"
 description = "Runtime call-chain anomaly monitor for MCP servers — rug-pull detection + behavioural anomaly rules, delivered as a CLI, a GitHub Action, and an MCP server."
 readme = "README.md"
@@ -25,16 +25,16 @@ server = ["mcp>=1.2.0"]
 dev = ["pytest>=8.0"]
 
 [project.urls]
-Homepage = "https://github.com/Zuga-luga/mcp-sentinel"
-Repository = "https://github.com/Zuga-luga/mcp-sentinel"
-Issues = "https://github.com/Zuga-luga/mcp-sentinel/issues"
+Homepage = "https://github.com/Zuga-luga/zugawatch"
+Repository = "https://github.com/Zuga-luga/zugawatch"
+Issues = "https://github.com/Zuga-luga/zugawatch/issues"
 
 [project.scripts]
-sentinel = "mcp_sentinel.cli:main"
-sentinel-mcp = "mcp_sentinel.server:main"
+zugawatch = "zugawatch.cli:main"
+zugawatch-mcp = "zugawatch.server:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mcp_sentinel"]
+packages = ["src/zugawatch"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

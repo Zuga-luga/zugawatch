@@ -1,7 +1,7 @@
 """Roll findings + pin drift into a single A-F grade.
 
 The letter grade mirrors how MCP registries (Glama, et al.) already present
-server quality, so a Sentinel report is instantly legible to that audience.
+server quality, so a ZugaWatch report is instantly legible to that audience.
 """
 
 from __future__ import annotations

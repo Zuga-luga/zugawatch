@@ -1,4 +1,4 @@
-name: "MCP Sentinel"
+name: "MCP ZugaWatch"
 description: "Gate CI on MCP tool-definition drift (rug-pulls) and call-chain anomalies. Fails the build on grade C or below."
 branding:
   icon: "shield"
@@ -12,15 +12,15 @@ inputs:
   lock:
     description: "Lockfile path. Created on first run, verified against on later runs."
     required: false
-    default: "sentinel.lock"
+    default: "zugawatch.lock"
   chain:
     description: "Path to a recorded call-chain JSON to grade. Optional."
     required: false
     default: ""
   ref:
-    description: "pip spec to install. Defaults to the git tag (works before PyPI publish); set to 'mcp-sentinel==0.4.0' once published."
+    description: "pip spec to install. Defaults to the git tag (works before PyPI publish); set to 'zugawatch==0.7.0' once published."
     required: false
-    default: "git+https://github.com/Zuga-luga/mcp-sentinel@v0.4"
+    default: "git+https://github.com/Zuga-luga/zugawatch@v0.7.0"
 
 outputs:
   grade:
@@ -53,20 +53,20 @@ runs:
         if [ -n "$TOOLS" ]; then
           if [ -f "$LOCK" ]; then
             echo "::group::Rug-pull / drift check"
-            sentinel verify "$TOOLS" --lock "$LOCK" || status=1
+            zugawatch verify "$TOOLS" --lock "$LOCK" || status=1
             echo "::endgroup::"
           else
             echo "No lockfile at $LOCK — pinning for the first time."
-            sentinel pin "$TOOLS" --lock "$LOCK"
+            zugawatch pin "$TOOLS" --lock "$LOCK"
           fi
         fi
         if [ -n "$CHAIN" ]; then
           echo "::group::Call-chain grade"
-          out=$(sentinel grade "$CHAIN") || status=1
+          out=$(zugawatch grade "$CHAIN") || status=1
           echo "$out"
           grade=$(echo "$out" | head -1 | sed -E 's/^GRADE ([A-F]).*/\1/')
           echo "grade=$grade" >> "$GITHUB_OUTPUT"
-          echo "### MCP Sentinel: grade $grade" >> "$GITHUB_STEP_SUMMARY"
+          echo "### MCP ZugaWatch: grade $grade" >> "$GITHUB_STEP_SUMMARY"
           echo "::endgroup::"
         fi
         exit $status

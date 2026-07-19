@@ -8,7 +8,7 @@ prompt-engineering tools say "system prompt." After tightening the rules from
 *vocabulary* to *attack-patterns* (and deleting two rules that proved unreliable),
 the same 183 servers produced **0 findings, 0 false positives, and no confirmed
 tool-poisoning**. The false-positive problem — not the attacks — is the headline.
-Tool and method are open source: [mcp-sentinel](https://github.com/Zuga-luga/mcp-sentinel).
+Tool and method are open source: [zugawatch](https://github.com/Zuga-luga/zugawatch).
 
 ## Why this matters
 
@@ -24,7 +24,7 @@ descriptions for dangerous words. This piece is about why that instinct fails.
 
 - **Source:** Smithery registry, fetched 2026-06-19. 183 unique servers, 172 with
   tool definitions, 3,171 tools total.
-- **Scanner:** `mcp-sentinel scan` — static rules over each tool's name,
+- **Scanner:** `zugawatch scan` — static rules over each tool's name,
   description, and input schema. No server was executed; only published manifest
   JSON was read, so scanning untrusted servers at scale is safe.
 - **Reproduce:**
@@ -39,7 +39,7 @@ descriptions for dangerous words. This piece is about why that instinct fails.
 | Detector | Servers flagged | Findings | All false positives? |
 |---|---|---|---|
 | Keyword rules (grep for "password/token/system prompt/URL") | **32 / 183** | **401** | yes — every one |
-| Attack-pattern rules (mcp-sentinel v0.7) | **0 / 183** | **0** | — |
+| Attack-pattern rules (zugawatch v0.7) | **0 / 183** | **0** | — |
 
 The 401 false positives broke down as: 355 "references a secret" (legitimate
 auth/crypto/password-manager tools), 23 embedded-URL (documentation links to
@@ -58,7 +58,7 @@ LLM-eval tools that literally discuss prompt injection), 11 "cross-tool steering
 
 ## Controlled benchmark (synthetic)
 
-Alongside the field test, mcp-sentinel ships a labeled 122-scenario corpus
+Alongside the field test, zugawatch ships a labeled 122-scenario corpus
 (attacks, benign-but-risky, and evasion) with an evaluation harness. On it the
 runtime call-chain detector scores:
 
@@ -90,8 +90,8 @@ independent evidence is the 183-server field test above, on data I did not write
 ## Takeaways
 
 - **For consumers:** pin tool definitions and re-verify each session
-  (`sentinel verify`) so a rug pull is caught before the agent acts; gate CI with
-  the [mcp-sentinel Action](https://github.com/Zuga-luga/mcp-sentinel).
+  (`zugawatch verify`) so a rug pull is caught before the agent acts; gate CI with
+  the [zugawatch Action](https://github.com/Zuga-luga/zugawatch).
 - **For registries:** if you scan at index time, measure your false-positive rate
   first — a grep-based grade will mislabel hundreds of legitimate servers.
 - **For the field:** in agent security, false-positive discipline is the whole
@@ -105,7 +105,7 @@ after disclosure.)
 
 ---
 
-*Method and tooling: [mcp-sentinel](https://github.com/Zuga-luga/mcp-sentinel) —
+*Method and tooling: [zugawatch](https://github.com/Zuga-luga/zugawatch) —
 the only open-source MCP security tool that audits runtime call-chain behaviour,
 not just static tool definitions. Benchmark: precision 1.000, recall 0.902,
 FPR 0.000 on 122 labeled scenarios; field-tested on 183 live servers.*

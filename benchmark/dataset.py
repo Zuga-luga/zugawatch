@@ -1,4 +1,4 @@
-"""Labeled benchmark corpus for MCP Sentinel.
+"""Labeled benchmark corpus for MCP ZugaWatch.
 
 The point of this dataset is *honesty*, not a rigged 100%. It includes:
 

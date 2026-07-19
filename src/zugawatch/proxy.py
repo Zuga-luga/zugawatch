@@ -1,6 +1,6 @@
 """Transparent stdio proxy — records a live MCP session automatically.
 
-Sentinel spawns the real MCP server as a subprocess and sits in the middle of
+ZugaWatch spawns the real MCP server as a subprocess and sits in the middle of
 the stdio JSON-RPC stream:
 
     client ──stdin──> [ ProxyObserver ] ──stdin──> target server
@@ -198,9 +198,9 @@ class StdioProxy:
             with open(self.report_path, "w", encoding="utf-8") as fh:
                 json.dump(report, fh, indent=2)
                 fh.write("\n")
-        line = f"[sentinel] {report['calls']} calls  grade {report['grade']} ({report['score']}/100)"
+        line = f"[zugawatch] {report['calls']} calls  grade {report['grade']} ({report['score']}/100)"
         if report["drift_alerts"]:
             line += "  DRIFT: " + ", ".join(report["drift_alerts"])
         print(line, file=sys.stderr)
         for f in report["findings"]:
-            print(f"[sentinel] {f['severity'].upper()} {f['rule']} {f['message']}", file=sys.stderr)
+            print(f"[zugawatch] {f['severity'].upper()} {f['rule']} {f['message']}", file=sys.stderr)

@@ -2,7 +2,7 @@ startCommand:
   type: stdio
   commandFunction: |
     (config) => ({
-      command: "sentinel-mcp",
+      command: "zugawatch-mcp",
       args: [],
       env: {}
     })

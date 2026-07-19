@@ -15,7 +15,7 @@ makes the piece credible. Do not round up, do not claim servers were "tested"
 tool definitions that trip at least one prompt-injection / tool-poisoning signal.
 {{N_HIGH}} carry a HIGH-severity finding (hidden instructions, credential-grabbing,
 or override language). I scanned the *published manifests only* — no server was
-ever executed. Tool + method are open source: [mcp-sentinel](https://github.com/Zuga-luga/mcp-sentinel).
+ever executed. Tool + method are open source: [zugawatch](https://github.com/Zuga-luga/zugawatch).
 
 ## Why this matters
 
@@ -29,7 +29,7 @@ Top 10 lists it under ASI01 (Agent Goal Hijack).
 ## Method
 
 - **Source:** Smithery registry ({{DATE}}), {{N_SERVERS}} servers, {{N_TOOLS}} tool definitions.
-- **Scanner:** `mcp-sentinel scan` — five static rules over each tool's name,
+- **Scanner:** `zugawatch scan` — five static rules over each tool's name,
   description, and input schema:
 
   | Rule | What it catches | Severity |
@@ -74,7 +74,7 @@ Flagged: **{{EXAMPLE_RULE}}** — {{EXAMPLE_EXPLANATION}}.
 
 - **Static text analysis.** I scanned what servers *declare*, not what they *do*.
   A flagged description is a signal, not a conviction; a clean one is not a
-  guarantee — encrypted/obfuscated payloads evade text rules (mcp-sentinel's own
+  guarantee — encrypted/obfuscated payloads evade text rules (zugawatch's own
   benchmark reports a {{BENCHMARK_RECALL}} recall ceiling for this reason).
 - **Sample, not census.** {{N_SERVERS}} servers from one registry on one date —
   not the whole ecosystem.
@@ -84,8 +84,8 @@ Flagged: **{{EXAMPLE_RULE}}** — {{EXAMPLE_EXPLANATION}}.
 ## What to do about it
 
 - **Consumers:** pin tool definitions and re-verify each session
-  (`sentinel verify`) so a rug pull is caught before the agent acts; gate CI with
-  the [mcp-sentinel Action](https://github.com/Zuga-luga/mcp-sentinel).
+  (`zugawatch verify`) so a rug pull is caught before the agent acts; gate CI with
+  the [zugawatch Action](https://github.com/Zuga-luga/zugawatch).
 - **Registries:** run a manifest scan at index time and surface a grade.
 - **Server authors:** keep instructions in docs, not tool descriptions.
 
@@ -95,7 +95,7 @@ Flagged: **{{EXAMPLE_RULE}}** — {{EXAMPLE_EXPLANATION}}.
 
 ---
 
-*Method and tooling: [mcp-sentinel](https://github.com/Zuga-luga/mcp-sentinel) —
+*Method and tooling: [zugawatch](https://github.com/Zuga-luga/zugawatch) —
 the only open-source MCP security tool that audits runtime call-chain behaviour,
 not just static tool definitions. Benchmark: precision {{BENCHMARK_PRECISION}},
 recall {{BENCHMARK_RECALL}}, FPR {{BENCHMARK_FPR}}.*

@@ -1,7 +1,7 @@
 """Call-chain anomaly engine.
 
 This is the part no other open-source MCP tool has: instead of scanning a tool
-*definition* once, Sentinel records the *sequence* of tool calls an agent makes
+*definition* once, ZugaWatch records the *sequence* of tool calls an agent makes
 across one or more servers, builds a chain, and runs behavioural rules over it.
 The dangerous patterns in agentic systems are emergent across calls — read a
 secret, then send it somewhere, then delete the evidence — and are invisible to

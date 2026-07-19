@@ -1,5 +1,12 @@
 # Changelog
 
+## Renamed: mcp-sentinel -> ZugaWatch (2026-07-19)
+Same repo, same history, same v0.7.0 functionality — renamed to avoid the
+`mcp-sentinel` PyPI name being stuck under a locked-out account at a dead
+v0.1.0. New identity: repo `Zuga-luga/zugawatch`, package `zugawatch`, CLI
+`zugawatch`/`zugawatch-mcp`. Verified: 31/31 tests pass, full CLI smoke-tested
+end to end under the new name. Old `mcp-sentinel` GitHub URL redirects here.
+
 ## 0.7.0
 - **Eliminated the remaining static-scan false positives.** On the 183-server
   field sample the v0.6 rules still over-flagged via cross-tool steering (MCPP004)
@@ -37,7 +44,7 @@
   executed — manifest JSON only.
 
 ## 0.4.0
-- **Static manifest scanner** (`sentinel scan`, `mcp_sentinel.scan`): detects
+- **Static manifest scanner** (`zugawatch scan`, `zugawatch.scan`): detects
   prompt-injection / tool-poisoning in published tool definitions without ever
   running the server — hidden/bidi unicode (MCPP001), injection/override language
   (MCPP002), secret/credential references (MCPP003), cross-tool steering
@@ -59,12 +66,12 @@
   not hidden. Regression-guard test locks the metrics in CI.
 
 ## 0.2.1
-- **`sentinel-action`** composite GitHub Action: one-line CI gate that installs
-  Sentinel, runs the rug-pull/drift check and chain grade, fails the build on
+- **`zugawatch-action`** composite GitHub Action: one-line CI gate that installs
+  ZugaWatch, runs the rug-pull/drift check and chain grade, fails the build on
   drift or grade C-or-below, and writes the grade to the job summary.
 
 ## 0.2.0
-- **Transparent stdio proxy** (`sentinel proxy -- <server cmd>`): spawns a target
+- **Transparent stdio proxy** (`zugawatch proxy -- <server cmd>`): spawns a target
   MCP server, relays stdio faithfully, and records the live session into a graded
   report automatically — no manual chain JSON.
 - Real-time rug-pull detection: tool-definition drift is flagged the moment
@@ -76,5 +83,5 @@
 - Tool-definition pinning + rug-pull/drift detection (SHA-256, canonical JSON).
 - Call-chain anomaly engine with three rules: read-then-exfil (SENT001),
   destructive-after-read (SENT002), repetition-loop (SENT003).
-- A–F grading, `sentinel` CLI (pin/verify/analyze/grade), MCP-server interface.
+- A–F grading, `zugawatch` CLI (pin/verify/analyze/grade), MCP-server interface.
 - Registry metadata: MIT, CI, smithery.yaml, server.json, icon.svg.

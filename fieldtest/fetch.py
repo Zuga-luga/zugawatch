@@ -27,7 +27,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-UA = {"User-Agent": "mcp-sentinel-fieldtest/0.5 (+https://github.com/Zuga-luga/mcp-sentinel)"}
+UA = {"User-Agent": "zugawatch-fieldtest/0.5 (+https://github.com/Zuga-luga/zugawatch)"}
 
 
 def _get(url: str, headers: dict[str, str] | None = None, retries: int = 2):

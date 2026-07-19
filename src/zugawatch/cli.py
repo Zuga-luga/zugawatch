@@ -1,9 +1,9 @@
-"""sentinel CLI.
+"""zugawatch CLI.
 
-    sentinel pin     <tools.json> --lock sentinel.lock
-    sentinel verify  <tools.json> --lock sentinel.lock      # rug-pull check
-    sentinel analyze <chain.json>                            # call-chain anomalies
-    sentinel grade   <chain.json> [--lock sentinel.lock --tools tools.json]
+    zugawatch pin     <tools.json> --lock zugawatch.lock
+    zugawatch verify  <tools.json> --lock zugawatch.lock      # rug-pull check
+    zugawatch analyze <chain.json>                            # call-chain anomalies
+    zugawatch grade   <chain.json> [--lock zugawatch.lock --tools tools.json]
 
 Input formats are plain JSON so the CLI works against any MCP server's
 captured output without a live connection (and so CI can gate on a fixture).
@@ -102,7 +102,7 @@ def cmd_proxy(args) -> int:
     if command and command[0] == "--":
         command = command[1:]
     if not command:
-        print("usage: sentinel proxy [--lock L] [--report R] -- <server command...>", file=sys.stderr)
+        print("usage: zugawatch proxy [--lock L] [--report R] -- <server command...>", file=sys.stderr)
         return 2
     return StdioProxy(
         command=command,
@@ -125,18 +125,18 @@ def cmd_grade(args) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="sentinel", description="Runtime MCP call-chain anomaly monitor")
+    p = argparse.ArgumentParser(prog="zugawatch", description="Runtime MCP call-chain anomaly monitor")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sp = sub.add_parser("pin", help="pin tool definitions to a lockfile")
     sp.add_argument("tools")
-    sp.add_argument("--lock", default="sentinel.lock")
+    sp.add_argument("--lock", default="zugawatch.lock")
     sp.add_argument("--server", default="default")
     sp.set_defaults(func=cmd_pin)
 
     sv = sub.add_parser("verify", help="check live tools against the lockfile (rug-pull)")
     sv.add_argument("tools")
-    sv.add_argument("--lock", default="sentinel.lock")
+    sv.add_argument("--lock", default="zugawatch.lock")
     sv.set_defaults(func=cmd_verify)
 
     sa = sub.add_parser("analyze", help="run anomaly rules over a recorded call-chain")
@@ -149,7 +149,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     pr = sub.add_parser(
         "proxy",
-        help="run a target MCP server through Sentinel, recording the live session",
+        help="run a target MCP server through ZugaWatch, recording the live session",
     )
     pr.add_argument("--lock", help="pin/verify tool defs against this lockfile (rug-pull check)")
     pr.add_argument("--report", help="write the graded JSON report here at shutdown")

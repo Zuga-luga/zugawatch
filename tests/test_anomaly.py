@@ -1,4 +1,4 @@
-from mcp_sentinel.anomaly import AnomalyEngine, CallChain, Capability, classify
+from zugawatch.anomaly import AnomalyEngine, CallChain, Capability, classify
 
 
 def test_classify_uses_annotations_then_names():

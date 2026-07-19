@@ -1,4 +1,4 @@
-"""Field-test harness — run Sentinel's static manifest scanner across a set of
+"""Field-test harness — run ZugaWatch's static manifest scanner across a set of
 real-world server manifests and write a findings report.
 
     python fieldtest/run.py [path/to/servers.json]
@@ -6,7 +6,7 @@ real-world server manifests and write a findings report.
 Input is `{ "servers": [ { "name", "tools": [ {name, description, inputSchema} ] } ] }`
 — the same shape registries (Glama/Smithery/official) expose. The default seed
 (`fieldtest/servers.json`) is representative, not live; point it at a registry
-export to scan real servers. Sentinel never runs the servers — it only reads the
+export to scan real servers. ZugaWatch never runs the servers — it only reads the
 published tool prose, so scanning untrusted servers at scale is safe.
 """
 
@@ -19,8 +19,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from mcp_sentinel.grade import grade as compute_grade  # noqa: E402
-from mcp_sentinel.scan import scan_manifest, tools_from_json  # noqa: E402
+from zugawatch.grade import grade as compute_grade  # noqa: E402
+from zugawatch.scan import scan_manifest, tools_from_json  # noqa: E402
 
 
 def run(path: Path):
@@ -44,7 +44,7 @@ def run(path: Path):
 def render(rows, by_rule, flagged_tools) -> str:
     n = len(rows)
     clean = sum(1 for r in rows if r["grade"] in ("A", "B"))
-    out = ["# MCP Sentinel — Field-Test Findings\n",
+    out = ["# MCP ZugaWatch — Field-Test Findings\n",
            "Static scan of published tool manifests (servers are never executed).\n",
            f"**{n} servers scanned** · {clean} clean (A/B) · {n - clean} flagged · "
            f"{flagged_tools} tool(s) with findings\n",

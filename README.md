@@ -1,11 +1,11 @@
-# MCP Sentinel
+# MCP ZugaWatch
 
-**Runtime call-chain anomaly monitor for MCP servers.** Sentinel watches what an
+**Runtime call-chain anomaly monitor for MCP servers.** ZugaWatch watches what an
 MCP server *actually does* across a whole agent session — not just what a single
 tool definition says — and catches the emergent attacks that static scanners
 miss.
 
-[![CI](https://github.com/Zuga-luga/mcp-sentinel/actions/workflows/ci.yml/badge.svg)](https://github.com/Zuga-luga/mcp-sentinel/actions/workflows/ci.yml)
+[![CI](https://github.com/Zuga-luga/zugawatch/actions/workflows/ci.yml/badge.svg)](https://github.com/Zuga-luga/zugawatch/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org)
 
@@ -15,14 +15,14 @@ There are already a dozen MCP *static* scanners — they read a server's tool
 definitions once and flag injection strings. But the real damage in agentic
 systems is **emergent across calls**: read a secret → POST it to a URL → delete
 the log. Each call looks fine alone. No open-source tool sequences the calls and
-flags the *pattern*. Sentinel does.
+flags the *pattern*. ZugaWatch does.
 
 It also closes the **rug-pull** gap: a server passes review, then silently
 mutates its tool descriptions after install so the agent re-reads poisoned
-instructions next session. Sentinel cryptographically pins every tool definition
+instructions next session. ZugaWatch cryptographically pins every tool definition
 and flags any post-approval change.
 
-| | static scanners | **Sentinel** |
+| | static scanners | **ZugaWatch** |
 |---|:--:|:--:|
 | Scan tool definitions | ✅ | ✅ |
 | Cryptographic pin + rug-pull / drift detection | ✗ | ✅ |
@@ -34,11 +34,11 @@ and flags any post-approval change.
 ## Install
 
 ```sh
-pip install "git+https://github.com/Zuga-luga/mcp-sentinel@v0.7.0"            # zero-dependency core (CLI)
-pip install "git+https://github.com/Zuga-luga/mcp-sentinel@v0.7.0#egg=mcp-sentinel[server]"  # + the MCP-server entrypoint
+pip install "git+https://github.com/Zuga-luga/zugawatch@v0.7.0"            # zero-dependency core (CLI)
+pip install "git+https://github.com/Zuga-luga/zugawatch@v0.7.0#egg=zugawatch[server]"  # + the MCP-server entrypoint
 ```
 
-> **`pip install mcp-sentinel` (bare, from PyPI) is currently stuck on v0.1.0**
+> **`pip install zugawatch` (bare, from PyPI) is currently stuck on v0.1.0**
 > (uploaded 2026-02-12) — six releases behind and missing pinning, the proxy,
 > the static scanner, grading, and the GitHub Action entirely. The PyPI
 > account that owns the name is locked out pending recovery; use the git-tag
@@ -49,15 +49,15 @@ pip install "git+https://github.com/Zuga-luga/mcp-sentinel@v0.7.0#egg=mcp-sentin
 ### 1. Pin a server's tools, then detect rug-pulls
 
 ```sh
-sentinel pin examples/tools.json --lock sentinel.lock   # trust on first use
-sentinel verify examples/tools.json --lock sentinel.lock # later sessions
+zugawatch pin examples/tools.json --lock zugawatch.lock   # trust on first use
+zugawatch verify examples/tools.json --lock zugawatch.lock # later sessions
 # DRIFT [mutated] get_weather   *** RUG-PULL SUSPECT ***   (exit 1)
 ```
 
 ### 2. Analyze a recorded call-chain
 
 ```sh
-sentinel analyze examples/chain_exfil.json
+zugawatch analyze examples/chain_exfil.json
 # [HIGH  ] SENT001  Data read by 'read_file' (seq 0) flows into network tool 'http_post' (seq 1) - possible exfiltration.
 # [HIGH  ] SENT002  Destructive tool 'delete_file' (seq 2) runs after read 'read_file' (seq 0) across a server boundary - read-then-destroy pattern.
 ```
@@ -65,20 +65,20 @@ sentinel analyze examples/chain_exfil.json
 ### 3. Grade it (CI gate — exit 0 for A/B, 1 otherwise)
 
 ```sh
-sentinel grade examples/chain_exfil.json
+zugawatch grade examples/chain_exfil.json
 # GRADE D  (50/100)  findings=2 drifts=0   (exit 1)
 ```
 
 ### 4. Transparent proxy — record a live session automatically
 
-Wrap any MCP server. Sentinel spawns it, relays stdio faithfully (the client and
+Wrap any MCP server. ZugaWatch spawns it, relays stdio faithfully (the client and
 server don't know it's there), and records the real session — no manual JSON:
 
 ```sh
-sentinel proxy --lock sentinel.lock --report report.json -- npx -y @some/mcp-server
+zugawatch proxy --lock zugawatch.lock --report report.json -- npx -y @some/mcp-server
 ```
 
-Point your MCP client at `sentinel proxy -- <server cmd>` instead of the server
+Point your MCP client at `zugawatch proxy -- <server cmd>` instead of the server
 directly. On shutdown it writes a graded JSON report and prints a summary to
 stderr; tool-definition drift is flagged the moment `tools/list` comes back —
 the runtime rug-pull catch, *before* the agent uses the tools.
@@ -89,7 +89,7 @@ Audit a server's published tool definitions for prompt-injection / tool-poisonin
 without ever running it — the safe way to vet untrusted servers at scale:
 
 ```sh
-sentinel scan manifest.json
+zugawatch scan manifest.json
 # GRADE D  (50/100)  2 finding(s)
 #   [HIGH  ] MCPP002  Tool 'add' description contains prompt-injection / override language.
 ```
@@ -122,7 +122,7 @@ servers produced zero findings.
 | Detector (same 183 servers) | Servers flagged | Findings |
 |---|---|---|
 | Keyword rules (grep for scary words) | 32 | **401 — all false positives** |
-| Attack-pattern rules (mcp-sentinel) | **0** | **0** |
+| Attack-pattern rules (zugawatch) | **0** | **0** |
 
 The takeaway — *in agent security, false-positive discipline is the whole game; a
 detector that cries wolf 401 times trains everyone to ignore it* — is itself the
@@ -131,8 +131,8 @@ result. Full method, caveats, and reproduction: **[fieldtest/WRITEUP.md](fieldte
 ### 6. GitHub Action — one-line CI gate
 
 ```yaml
-# .github/workflows/sentinel.yml
-- uses: Zuga-luga/mcp-sentinel@v0.7.0
+# .github/workflows/zugawatch.yml
+- uses: Zuga-luga/zugawatch@v0.7.0
   with:
     tools: examples/tools.json        # rug-pull check (pins on first run)
     chain: examples/chain_exfil.json  # grade the recorded session
@@ -144,7 +144,7 @@ grade to the job summary. See `examples/workflow.yml`.
 ### 7. As an MCP server (agents self-audit)
 
 ```sh
-sentinel-mcp     # exposes analyze_chain, check_drift, grade_server
+zugawatch-mcp     # exposes analyze_chain, check_drift, grade_server
 ```
 
 ## Built-in anomaly rules
@@ -160,7 +160,7 @@ them to `AnomalyEngine(rules=[...])`.
 
 ## Benchmark — measured, not claimed
 
-Security tools live or die on data. Sentinel ships a labeled corpus
+Security tools live or die on data. ZugaWatch ships a labeled corpus
 (`benchmark/dataset.py`, 122 scenarios: attacks, benign, and evasion) and an
 evaluation harness (`benchmark/run.py`) that reports precision / recall / F1 /
 false-positive-rate. Run it yourself: `python benchmark/run.py`.
@@ -183,9 +183,9 @@ driven by failures this benchmark surfaced. Full report: `benchmark/RESULTS.md`.
 ## Design
 
 ```
-agent ──calls──> [ Sentinel ] ──forwards──> target MCP server
+agent ──calls──> [ ZugaWatch ] ──forwards──> target MCP server
                      │
-                     ├─ pin tool defs on first connect (sentinel.lock)
+                     ├─ pin tool defs on first connect (zugawatch.lock)
                      ├─ record every call into a CallChain
                      └─ run anomaly rules + grade
 ```

@@ -1,4 +1,4 @@
-from mcp_sentinel.pinning import PinStore, ToolDef, diff_pins, DriftKind
+from zugawatch.pinning import PinStore, ToolDef, diff_pins, DriftKind
 
 
 def _tools():
@@ -17,7 +17,7 @@ def test_digest_is_canonical_and_stable():
 
 def test_clean_roundtrip_has_no_drift(tmp_path):
     store = PinStore.pin("svc", _tools())
-    path = tmp_path / "sentinel.lock"
+    path = tmp_path / "zugawatch.lock"
     store.save(str(path))
     reloaded = PinStore.load(str(path))
     assert diff_pins(reloaded, _tools()) == []

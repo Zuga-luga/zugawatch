@@ -1,6 +1,6 @@
 """Tool-definition pinning — cryptographic rug-pull detection.
 
-On first connection Sentinel hashes each tool's name, description, and input
+On first connection ZugaWatch hashes each tool's name, description, and input
 schema into a lockfile. On every later session it re-hashes the live tools and
 diffs against the lock. A changed description or schema for an already-trusted
 tool is the "rug pull" attack: the server passed review, then silently mutated
@@ -71,7 +71,7 @@ class Drift:
 
 
 class PinStore:
-    """Load/save a sentinel.lock pin file and pin a set of live tools."""
+    """Load/save a zugawatch.lock pin file and pin a set of live tools."""
 
     def __init__(self, server: str, pins: dict[str, ToolPin] | None = None) -> None:
         self.server = server

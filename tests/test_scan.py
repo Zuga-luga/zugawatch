@@ -1,5 +1,5 @@
-from mcp_sentinel.pinning import ToolDef
-from mcp_sentinel.scan import scan_tool, scan_manifest
+from zugawatch.pinning import ToolDef
+from zugawatch.scan import scan_tool, scan_manifest
 
 
 def test_clean_tool_has_no_findings():

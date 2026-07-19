@@ -1,11 +1,11 @@
-"""Sentinel as an MCP server — so an agent can audit other servers itself.
+"""ZugaWatch as an MCP server — so an agent can audit other servers itself.
 
-Run:  sentinel-mcp   (requires the optional `server` extra: pip install mcp-sentinel[server])
+Run:  zugawatch-mcp   (requires the optional `server` extra: pip install zugawatch[server])
 
 The tool descriptions here are deliberately written to the Glama TDQS rubric:
 each states what it does, when to use it, when NOT to, side effects, and exact
 parameter semantics. Annotations (readOnlyHint/destructiveHint) are set for the
-Smithery rubric. All Sentinel tools are read-only and have no side effects.
+Smithery rubric. All ZugaWatch tools are read-only and have no side effects.
 """
 
 from __future__ import annotations
@@ -66,10 +66,10 @@ def main() -> None:  # pragma: no cover - requires the mcp SDK + a live client
         from mcp.server.fastmcp import FastMCP
     except ImportError as exc:  # pragma: no cover
         raise SystemExit(
-            "The MCP server entrypoint needs the optional extra: pip install mcp-sentinel[server]"
+            "The MCP server entrypoint needs the optional extra: pip install zugawatch[server]"
         ) from exc
 
-    mcp = FastMCP("mcp-sentinel")
+    mcp = FastMCP("zugawatch")
 
     @mcp.tool(annotations={"readOnlyHint": True})
     def analyze_chain(events_json: str) -> str:
@@ -91,7 +91,7 @@ def main() -> None:  # pragma: no cover - requires the mcp SDK + a live client
         new session before trusting a server. Do NOT use it for behavioural
         analysis — use analyze_chain. Read-only; no side effects.
 
-        pinned_json: the saved sentinel.lock object. live_tools_json: JSON array
+        pinned_json: the saved zugawatch.lock object. live_tools_json: JSON array
         of the server's current tools. Returns {"drifts":[{"name","kind"}]}.
         """
         return json.dumps(tool_check_drift(json.loads(pinned_json), json.loads(live_tools_json)))

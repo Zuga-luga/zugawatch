@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from mcp_sentinel.proxy import ProxyObserver
+from zugawatch.proxy import ProxyObserver
 
 SRC = str(Path(__file__).resolve().parents[1] / "src")
 FAKE = str(Path(__file__).resolve().parent / "fake_server.py")
@@ -25,7 +25,7 @@ def test_observer_records_calls_and_results():
 
 
 def test_observer_pins_then_detects_rugpull(tmp_path):
-    lock = str(tmp_path / "sentinel.lock")
+    lock = str(tmp_path / "zugawatch.lock")
     first = ProxyObserver(lock_path=lock)
     first.on_server_message({"id": 1, "result": {"tools": [{"name": "t", "description": "safe"}]}})
     assert os.path.exists(lock) and not first.drift_alerts
@@ -43,7 +43,7 @@ def test_proxy_end_to_end_flags_exfil(tmp_path):
     report = tmp_path / "report.json"
     env = {**os.environ, "PYTHONPATH": SRC}
     proc = subprocess.Popen(
-        [sys.executable, "-m", "mcp_sentinel.cli", "proxy", "--report", str(report), "--", sys.executable, FAKE],
+        [sys.executable, "-m", "zugawatch.cli", "proxy", "--report", str(report), "--", sys.executable, FAKE],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

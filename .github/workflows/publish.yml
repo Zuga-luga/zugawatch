@@ -2,7 +2,7 @@ name: Publish to PyPI
 
 # Publishes on every v* tag using PyPI Trusted Publishing (OIDC) — no API token
 # stored in the repo. One-time setup on PyPI: add a "pending publisher" for
-# project `mcp-sentinel`, owner `Zuga-luga`, repo `mcp-sentinel`, workflow
+# project `zugawatch`, owner `Zuga-luga`, repo `zugawatch`, workflow
 # `publish.yml`, environment `pypi`. (https://docs.pypi.org/trusted-publishers/)
 
 on:
