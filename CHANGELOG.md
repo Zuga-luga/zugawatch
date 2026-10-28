@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.1 (2026-10-28)
+- First PyPI release under the name `zugawatch` (trusted publishing). Same code as 0.7.0.
+
 ## Renamed: mcp-sentinel -> ZugaWatch (2026-07-19)
 Same repo, same history, same v0.7.0 functionality — renamed to avoid the
 `mcp-sentinel` PyPI name being stuck under a locked-out account at a dead

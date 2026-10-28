@@ -3,7 +3,7 @@
   "name": "io.github.zuga-luga/zugawatch",
   "title": "MCP ZugaWatch",
   "description": "Runtime call-chain anomaly monitor for MCP servers: rug-pull (tool-definition drift) detection plus behavioural anomaly rules over the sequence of tool calls.",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "repository": {
     "url": "https://github.com/Zuga-luga/zugawatch",
     "source": "github"
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "zugawatch",
-      "version": "0.7.0",
+      "version": "0.7.1",
       "transport": { "type": "stdio" },
       "runtimeHint": "uvx",
       "packageArguments": []
