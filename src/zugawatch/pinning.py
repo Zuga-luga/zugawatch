@@ -32,6 +32,17 @@ class ToolDef:
     description: str = ""
     input_schema: dict[str, Any] = field(default_factory=dict)
 
+    @classmethod
+    def from_dict(cls, t: dict[str, Any]) -> "ToolDef":
+        """Build a ToolDef from a tool dict in either spelling of the schema key.
+
+        MCP `tools/list` puts the schema under the wire key `inputSchema`; our own
+        dumps use `input_schema`. Reading only one pins `{}` for the other, so a
+        schema rug-pull is never seen. Either key (wire key first), else `{}`.
+        """
+        schema = t.get("inputSchema") or t.get("input_schema") or {}
+        return cls(name=t["name"], description=t.get("description", ""), input_schema=schema)
+
     def digest(self) -> str:
         payload = _canonical(
             {

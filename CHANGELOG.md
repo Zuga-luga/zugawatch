@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+- Fix: `zugawatch pin`/`verify`/`grade` and the `check_drift`/`grade_server` MCP tools
+  read only `input_schema`, so a raw MCP `tools/list` dump (wire key `inputSchema`)
+  pinned every schema as `{}` and schema rug-pulls went unseen. Both spellings are
+  now read through `ToolDef.from_dict`. Re-pin any lockfile that was built from a
+  wire-key dump: its pins hold the empty schema and will now verify as mutated.
+
 ## 0.7.1 (2026-10-28)
 - First PyPI release under the name `zugawatch` (trusted publishing). Same code as 0.7.0.
 

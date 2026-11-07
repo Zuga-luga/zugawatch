@@ -45,7 +45,7 @@ def tool_analyze_chain(events: list[dict]) -> dict:
 
 def tool_check_drift(pinned: dict, live_tools: list[dict]) -> dict:
     store = PinStore.from_dict(pinned)
-    live = [ToolDef(t["name"], t.get("description", ""), t.get("input_schema", {})) for t in live_tools]
+    live = [ToolDef.from_dict(t) for t in live_tools]
     drifts = diff_pins(store, live)
     return {"drifts": [{"name": d.name, "kind": d.kind.value} for d in drifts]}
 
@@ -54,7 +54,7 @@ def tool_grade_server(events: list[dict], pinned: dict | None = None, live_tools
     findings = AnomalyEngine().analyze(_build_chain(events))
     drifts = []
     if pinned and live_tools:
-        live = [ToolDef(t["name"], t.get("description", ""), t.get("input_schema", {})) for t in live_tools]
+        live = [ToolDef.from_dict(t) for t in live_tools]
         drifts = diff_pins(PinStore.from_dict(pinned), live)
     g = compute_grade(findings, drifts)
     return {"letter": g.letter, "score": g.score, "passing": g.passing,

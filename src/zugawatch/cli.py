@@ -7,7 +7,8 @@
 
 Input formats are plain JSON so the CLI works against any MCP server's
 captured output without a live connection (and so CI can gate on a fixture).
-`tools.json`  : [{"name","description","input_schema"}, ...]
+`tools.json`  : [{"name","description","inputSchema" or "input_schema"}, ...]
+               (either schema key works, so a raw MCP tools/list dump is accepted)
 `chain.json`  : [{"server","tool","args","result","description","annotations"}, ...]
 
 Exit code is 0 for grade A/B, 1 otherwise — drop it straight into CI.
@@ -30,14 +31,7 @@ def _load(path: str):
 
 
 def _tools(path: str) -> list[ToolDef]:
-    return [
-        ToolDef(
-            name=t["name"],
-            description=t.get("description", ""),
-            input_schema=t.get("input_schema", {}),
-        )
-        for t in _load(path)
-    ]
+    return [ToolDef.from_dict(t) for t in _load(path)]
 
 
 def _chain(path: str) -> CallChain:
